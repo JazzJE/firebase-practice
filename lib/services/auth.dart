@@ -5,8 +5,15 @@ class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Create a new client object based on the Firebase User provided credentials
   Client? _storeUIDFromUser(User? user) {
     return user != null ? Client(uid: user.uid) : null;
+  }
+
+  // Auth change user stream
+
+  Stream<Client?> get user {
+    return _auth.authStateChanges().map((User? u) => _storeUIDFromUser(u));
   }
 
   // sign in anon
