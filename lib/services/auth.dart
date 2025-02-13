@@ -12,7 +12,7 @@ class AuthService {
 
   // Auth change user stream
 
-  Stream<Client?> get user {
+  Stream<Client?> get userStream {
     return _auth.authStateChanges().map((User? u) => _storeUIDFromUser(u));
   }
 

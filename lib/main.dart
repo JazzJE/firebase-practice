@@ -1,16 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:my_first_project/models/client.dart';
 import 'package:my_first_project/screens/wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:my_first_project/services/auth.dart';
+import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 
 void main() async {
-  print('-- main');
-
   WidgetsFlutterBinding.ensureInitialized();
-  print('-- WidgetsFlutterBinding.ensureInitialized');
-
-  await Firebase.initializeApp();
-  print('-- main: Firebase.initializeApp');
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -20,8 +20,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Wrapper(),
+    return StreamProvider<Client?>.value(
+      value: AuthService().userStream,
+      initialData: null,
+      child: MaterialApp(
+        home: Wrapper(),
+      ),
     );
   }
 }
