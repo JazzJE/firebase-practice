@@ -4,7 +4,7 @@ import 'package:my_first_project/services/auth.dart';
 class Home extends StatelessWidget {
   Home({super.key});
 
-  final AuthService _auth = AuthService();
+  final AuthService _authenticator = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class Home extends StatelessWidget {
           TextButton.icon(
             icon: Icon(Icons.person),
             onPressed: () async {
-              await _auth.signOut();
+              await _authenticator.signOut();
             },
             label: Text('Logout'),
           )
