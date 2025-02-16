@@ -13,6 +13,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
 
   final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   // text field state
   String email = '';
@@ -42,10 +43,12 @@ class _RegisterState extends State<Register> {
         // This will make the widget not touch the edges of the screen
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
         child: Form(
+          key: _formKey,
           child: Column(
             children: <Widget>[
               SizedBox(height:20.0),
               TextFormField(
+                validator: (val) => val!.isEmpty ? "Enter an email" : null,
                 onChanged: (val) {
                   setState(() => email = val);
                 }
@@ -53,6 +56,7 @@ class _RegisterState extends State<Register> {
               SizedBox(height:20.0),
               TextFormField(
                 obscureText: true,
+                validator: (val) => val!.length < 6 ? "Enter a password 6+ characters long" : null,
                 onChanged: (val) {
                   setState(() => password = val);
                 }
@@ -68,8 +72,10 @@ class _RegisterState extends State<Register> {
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () async {
-                  print(email);
-                  print(password);
+                  if (_formKey.currentState.validate()) {
+                    print(email);
+                    print(password);
+                  }
               },
               )
             ]

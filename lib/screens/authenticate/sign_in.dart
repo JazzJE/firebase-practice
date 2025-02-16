@@ -11,11 +11,13 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final AuthService _authenticator = AuthService();
+  final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   // text field state
   String email = '';
   String password = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +42,18 @@ class _SignInState extends State<SignIn> {
         // This will make the widget not touch the edges of the screen
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
         child: Form(
+          key: _formKey,
             child: Column(children: <Widget>[
           SizedBox(height: 20.0),
-          TextFormField(onChanged: (val) {
-            setState(() => email = val);
+          TextFormField(
+            validator: (val) => val!.isEmpty ? "Enter an email" : null,
+            onChanged: (val) { 
+              setState(() => email = val);
           }),
           SizedBox(height: 20.0),
           TextFormField(
               obscureText: true,
+              validator: (val) => val!.length < 6 ? "Enter a password 6+ characters long" : null,
               onChanged: (val) {
                 setState(() => password = val);
               }),
@@ -62,10 +68,19 @@ class _SignInState extends State<SignIn> {
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () async {
-              print(email);
-              print(password);
-            },
-          )
+                if (_formKey.currentState!.validate()) {
+                  dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                  if (result == null) {
+                    setState(() => error = 'Please supply a valid email');
+                  }
+                }
+              },
+          ),
+          SizedBox(height:12.0),
+            Text(
+              error,
+              style: TextStyle(color: Colors.red, fontSize: 14.0),
+            ),
         ])),
       ),
     );
