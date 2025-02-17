@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_project/services/auth.dart';
+import 'package:my_first_project/shared/constants.dart';
+import 'package:my_first_project/shared/loading.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -13,6 +15,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   // text field state
   String email = '';
@@ -21,7 +24,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading? Loading() : Scaffold(
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
           backgroundColor: Colors.brown[400],
@@ -46,12 +49,14 @@ class _SignInState extends State<SignIn> {
             child: Column(children: <Widget>[
           SizedBox(height: 20.0),
           TextFormField(
+            decoration: textInputDecoration.copyWith(hintText: 'Email'),
             validator: (val) => val!.isEmpty ? "Enter an email" : null,
             onChanged: (val) { 
               setState(() => email = val);
           }),
           SizedBox(height: 20.0),
           TextFormField(
+              decoration: textInputDecoration.copyWith(hintText: 'Password'),
               obscureText: true,
               validator: (val) => val!.length < 6 ? "Enter a password 6+ characters long" : null,
               onChanged: (val) {
@@ -69,9 +74,13 @@ class _SignInState extends State<SignIn> {
             ),
             onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                  setState(() => isLoading = true);
                   dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                   if (result == null) {
-                    setState(() => error = 'Could not sign in with those credentials.');
+                    setState(() {
+                      error = 'Could not sign in with those credentials.';
+                      isLoading = false;
+                    });
                   }
                 }
               },

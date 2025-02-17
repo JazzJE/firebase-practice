@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_project/services/auth.dart';
+import 'package:my_first_project/shared/constants.dart';
+import 'package:my_first_project/shared/loading.dart';
 
 class Register extends StatefulWidget {
   final Function switchWidget;
@@ -17,10 +19,11 @@ class _RegisterState extends State<Register> {
   String email = '';
   String password = '';
   String error = '';
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading? Loading() : Scaffold(
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
           backgroundColor: Colors.brown[400],
@@ -45,12 +48,14 @@ class _RegisterState extends State<Register> {
             child: Column(children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
+                  decoration: textInputDecoration.copyWith(hintText: 'Email'),
                   validator: (val) => val!.isEmpty ? "Enter an email" : null,
                   onChanged: (val) {
                     setState(() => email = val);
                   }),
               SizedBox(height: 20.0),
               TextFormField(
+                  decoration: textInputDecoration.copyWith(hintText: 'Password'),
                   obscureText: true,
                   validator: (val) => val!.length < 6 ? "Enter a password 6+ characters long" : null,
                   onChanged: (val) {
@@ -68,9 +73,13 @@ class _RegisterState extends State<Register> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    setState(() => isLoading = true);
                     dynamic result = await _auth.registerWithEmailAndPassword(email, password);
                     if (result == null) {
-                      setState(() => error = 'Please supply a valid email');
+                      setState(() {
+                        error = 'Please supply a valid email';
+                        isLoading = false;
+                      });
                     }
                   }
                 },
